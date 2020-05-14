@@ -36,8 +36,9 @@ public class UsersController {
 
     @GetMapping("/status/check")    //랜덤포트를 정확히 알 수 있음
     public String status() {
-        env.getProperty("local.server.port");
-        return String.format("Working on port %s", env.getProperty("local.server.port"));
+        return String.format("Users-WS] Working on port %s, secret=%s",
+                env.getProperty("local.server.port"),
+                env.getProperty("token.secret"));
     }
 
     // 사용자 추가 API

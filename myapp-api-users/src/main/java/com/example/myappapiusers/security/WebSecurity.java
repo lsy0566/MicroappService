@@ -21,42 +21,46 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public WebSecurity(Environment env, UserService userService,
-                       BCryptPasswordEncoder bCryptPasswordEncoder){
+    public WebSecurity(Environment env, UserService usersService,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.env = env;
-        this.userService = userService;
+        this.userService = usersService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception{
+    protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-//        http.authorizeRequests().antMatchers("/users/**").permitAll();
         http.authorizeRequests()
-                .antMatchers("/**").hasIpAddress(env.getProperty("gateway.ip"))
+                .antMatchers("/**").permitAll()
                 .and()
                 .addFilter(getAuthenticationFilter());
-//                .antMatchers("/**").hasIpAddress(env.getProperty("172.19.199.161"));
-                // access() -> role
+//        http.authorizeRequests()
+//                    .antMatchers("/**")
+//                    .hasIpAddress("172.21.232.193")
+//                    .antMatchers("/**")
+//                    .hasIpAddress("59.29.224.67");
+        // access() -> role
 
         http.headers().frameOptions().disable();
     }
 
-    private AuthenticationFilter getAuthenticationFilter() throws Exception { //핸들링이 필요함
+    private AuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationFilter authenticationFilter =
                 new AuthenticationFilter(userService, env, authenticationManager());
-        authenticationFilter.setAuthenticationManager(
-                authenticationManager()
-        );
-
+//        authenticationFilter.setAuthenticationManager(
+//                authenticationManager()
+//        );
+        authenticationFilter.setFilterProcessesUrl(env.getProperty("login.url.path"));
         return authenticationFilter;
     }
+
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
         auth.userDetailsService(userService)
                 .passwordEncoder(bCryptPasswordEncoder);
-        super.configure(auth);
     }
 }

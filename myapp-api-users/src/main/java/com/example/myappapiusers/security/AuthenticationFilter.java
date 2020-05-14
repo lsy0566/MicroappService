@@ -6,6 +6,8 @@ import com.example.myappapiusers.service.UserService;
 import com.example.myappapiusers.shared.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,55 +22,60 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
     private UserService userService;
     private Environment env;
-    AuthenticationManager authenticationManager;
 
-    public AuthenticationFilter(UserService userService,
-                                Environment env,
-                                AuthenticationManager authenticationManager) {
-        this.userService = userService;
+    @Autowired
+    public AuthenticationFilter(UserService usersService, Environment env, AuthenticationManager authenticationManager) {
+        this.userService = usersService;
         this.env = env;
         super.setAuthenticationManager(authenticationManager);
     }
 
-    // check username=(email) passowrd 사용자 유무 확인 (encryptePassword), 토큰 처리작업
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        try {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try{
             LoginRequestModel creds = new ObjectMapper()
                     .readValue(request.getInputStream(), LoginRequestModel.class);
 
-            return getAuthenticationManager().authenticate( // 데이터 검증 작업
-                    new UsernamePasswordAuthenticationToken(    // 검증을 위한 객체
+            return getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(
                             creds.getEmail(),
                             creds.getPassword(),
                             new ArrayList<>()
                     )
             );
-        } catch (IOException ex) {
+        }catch (IOException ex){
             throw new RuntimeException();
         }
+
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
                                             FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
-        String email = ((User) authResult.getPrincipal()).getUsername(); // email 값 얻기
+                                            Authentication authResult) throws  IOException, ServletException{
+        // 비밀번호는 안나옴
+        // System.out.println(authResult);
+
+        // generate token
+        String email = ((User)authResult.getPrincipal()).getUsername();
+        // 한번 더 접속해서 DB 정보를 가져옴
         UserDto userDetail = userService.getUserDetailsByEmail(email);
 
-        // generate token with userId(email)
-        // toekn expire_date (configuration or application.yml)
+        // compact 호출해야 토큰 생성 됨
         String token = Jwts.builder()
+                .setSubject(userDetail.getUserId())
+                .setExpiration(new Date(System.currentTimeMillis()
+                        + Long.parseLong(env.getProperty("token.expiration_time"))))
+                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
                 .compact();
 
-        response.addHeader("token", token);
-        response.addHeader("userId", userDetail.getUserId());
+        res.addHeader("token", token);
+        res.addHeader("userId", userDetail.getUserId());
     }
 }

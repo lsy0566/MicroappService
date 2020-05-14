@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: DiscoveryService
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
 
 #Eureka Standalone Server
 eureka:

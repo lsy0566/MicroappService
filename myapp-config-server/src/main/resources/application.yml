@@ -1,0 +1,27 @@
+server:
+  port: 8012
+
+spring:
+  application:
+    name: ConfigServer
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/lsy0566/MyAppConfiguration.git
+#          username: lsy0566@naver.com
+#          password:
+          clone-on-start: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+

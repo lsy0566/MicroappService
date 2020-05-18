@@ -66,7 +66,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String email = ((User)authResult.getPrincipal()).getUsername();
         // 한번 더 접속해서 DB 정보를 가져옴
         UserDto userDetail = userService.getUserDetailsByEmail(email);
-
         // compact 호출해야 토큰 생성 됨
         String token = Jwts.builder()
                 .setSubject(userDetail.getUserId())

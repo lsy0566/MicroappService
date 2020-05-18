@@ -3,6 +3,7 @@ package com.example.myappapiusers.controller;
 import com.example.myappapiusers.data.UserEntity;
 import com.example.myappapiusers.model.CreateUserRequestModel;
 import com.example.myappapiusers.model.CreateUserResponseModel;
+import com.example.myappapiusers.model.UserResponseModel;
 import com.example.myappapiusers.repository.UserRepository;
 import com.example.myappapiusers.service.UserService;
 import com.example.myappapiusers.shared.UserDto;
@@ -54,7 +55,7 @@ public class UsersController {
             consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
     )
-    public ResponseEntity<CreateUserResponseModel> createUsers(@Valid @RequestBody CreateUserRequestModel userDetails){
+    public ResponseEntity<CreateUserResponseModel> createUsers(@Valid @RequestBody CreateUserRequestModel userDetails) {
         //CreateUserRequestModel -> UserDto (using ModelMapper)
 //        System.out.println(req.getRemoteAddr());
 
@@ -70,6 +71,19 @@ public class UsersController {
         // firstName, lastName, email, userId 클래스 생성해보기
 
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+
+    @GetMapping(value = "/{userId}",
+            produces = {MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity getUser(
+            @PathVariable("userId") String userId
+    ) {
+        UserDto userDto = userService.getUserByUserId(userId); // 1. 서비스 정의, 2. 구현 3번을 호출call해서 사용, 3. UserRepository에서 findxxx 메소드 정의
+        UserResponseModel returnValue =
+                new ModelMapper().map(userDto, UserResponseModel.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
 

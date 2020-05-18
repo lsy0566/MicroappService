@@ -1,0 +1,7 @@
+encrypt:
+#  key: test
+
+  key-store:
+    location: file:///C:/Users/HPE/work/dev/apiEncryptionKey.jks
+    password: key123
+    alias: thisIsKey

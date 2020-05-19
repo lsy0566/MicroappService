@@ -30,6 +30,23 @@ eureka:
       defaultZone: http://localhost:8010/eureka/
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+
+logging:
+  level:
+    com.example.myappapiusers.client: DEBUG
+
+feign:
+  hystrix:
+    enabled: true
+
+#exception:
+#  albums-not-found: Users albums are not found!!!
+albums:
+  exception:
+    albums-not-found: Users albums are not found!!!
+
+
 #gateway:
 #  ip: 59.29.224.78
 #
@@ -37,6 +54,6 @@ eureka:
 #  expiration_time: 864000000 # 10days (milliseconds)
 #  secret: local_secret
 #
-#login:
-#  url:
-#    path: /users/login
+login:
+  url:
+    path: /users/login

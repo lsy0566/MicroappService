@@ -6,6 +6,8 @@ import com.example.myappapiusers.data.UsersRepository;
 import com.example.myappapiusers.model.AlbumResponseModel;
 import com.example.myappapiusers.shared.UserDto;
 import com.netflix.discovery.shared.Application;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class UsersServiceImpl implements UserService {
+//    Logger logger = logger. Slf4j에선 안써도된다.
     UsersRepository repository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
 //    RestTemplate restTemplate;
@@ -104,7 +108,18 @@ public class UsersServiceImpl implements UserService {
 //                });
 //
 //        List<AlbumResponseModel> albumsList = albumsListResponse.getBody();
-        List<AlbumResponseModel> albumsList = albumServiceClient.getAlbums(userId);
+
+//        List<AlbumResponseModel> albumsList = null;
+//        try{
+//            albumsList = albumServiceClient.getAlbums(userId);
+//        } catch (FeignException ex) {
+//            log.error(ex.getLocalizedMessage());
+//        }
+
+//        albumServiceClient.getAlbums(userId);
+        List<AlbumResponseModel> albumsList =
+                albumServiceClient.getAlbums(userId);
+
         userDto.setAlbums(albumsList);
 
         return userDto;

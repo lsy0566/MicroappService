@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+</head>
+<body>
+<h1>Hello</h1>
+<div class="input-file" th:href="@{/css/index.css}">
+    <input type="text" readonly="readonly" class="file-name"/>
+    <label for="upload01"
+           class="file-label">파일 업로드</label>
+    <input type="file" name="" id="upload01" class="file-upload"/>
+</div>
+<br/><br/>
+<div class="input-file">
+    <input type="text" readonly="readonly" class="file-name"/>
+    <label for="upload02"
+           class="file-label">찾아보기</label>
+    <input type="file" name="" id="upload02" class="file-upload"/>
+</div>
+
+
+</body>
+</html>

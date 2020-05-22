@@ -14,7 +14,7 @@ spring:
         git:
           uri: https://github.com/lsy0566/MyAppConfiguration.git
           username: lsy0566@naver.com
-          password: ehddnr3584
+          password: 
           clone-on-start: true
         native:
           search-locations: file:///C:/Users/HPE/work/dev

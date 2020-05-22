@@ -18,7 +18,7 @@ spring:
           clone-on-start: true
         native:
           search-locations: file:///C:/Users/HPE/work/dev
-
+ 
   rabbitmq:
     host: localhost
     port: 5672
